@@ -1,0 +1,36 @@
+﻿@page "/"
+<div style="display:flex; justify-content: space-between;">
+    <div>
+        <MudTextField Label="ФИО" @bind-Value=@_newStudent.Fio />
+        <MudTextField Label="Номер з.к." @bind-Value=@_newStudent.NumberZk />
+        <MudDatePicker Label="Дата рождения" @bind-Date="_newStudent.BirthDate" />
+        <MudDatePicker Label="Дата поступления" @bind-Date="_newStudent.AdmissionDate"/>
+        <MudButton Color="Color.Primary" OnClick="OnLoadButtonClicked">Загрузить</MudButton>
+        <p>Фильтрация данных</p>
+        <MudTextField Label="Минимальный возраст" @bind-Value=@filter.MinAge />
+        <MudTextField Label="Максимальный возраст" @bind-Value=@filter.MaxAge />
+        <MudDatePicker Label="Минимальная дата поступления" @bind-Date="filter.FilterDateStart" />
+        <MudDatePicker Label="Максимальная дата поступления" @bind-Date="filter.FilterDateEnd" />
+        <MudButton Color="Color.Primary" OnClick="OnFilterButtonClicked">Фильтровать</MudButton>
+        <MudButton Color="Color.Primary" OnClick="OnFilterClearButtonClicked">Сбросить фильтр</MudButton>
+    </div>
+    <MudDivider FlexItem="true" Vertical="true"></MudDivider>
+    <div style="max-width:70%">
+
+        <MudTable Items="@_students"  MultiSelection="true" SelectionChangeable="true" @bind-SelectedItems="_selectedStudents" Hover="true" Breakpoint="Breakpoint.Sm" Loading="@_loading" LoadingProgressColor="Color.Info">
+            <HeaderContent>
+                <MudTh>ФИО</MudTh>
+                <MudTh>Номер з.к.</MudTh>
+                <MudTh>Дата рождения</MudTh>
+                <MudTh>Дата поступления</MudTh>
+            </HeaderContent>
+            <RowTemplate>
+                <MudTd DataLabel="Nr">@context.Fio</MudTd>
+                <MudTd DataLabel="Sign">@context.NumberZk</MudTd>
+                <MudTd DataLabel="Name">@context.BirthDate.Value.ToString("dd MMMM yyyy")</MudTd>
+                <MudTd DataLabel="Position">@context.AdmissionDate.Value.ToString("dd MMMM yyyy")</MudTd>
+            </RowTemplate>
+        </MudTable>
+        <MudButton Color="Color.Primary" OnClick="OnDeleteButtonClicked">Удалить выбранных пользователей</MudButton>
+    </div>
+</div>
