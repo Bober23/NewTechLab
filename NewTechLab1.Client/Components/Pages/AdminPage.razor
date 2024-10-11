@@ -1,0 +1,63 @@
+﻿@using NewTechLab.DTOs
+@page "/adminpanel"
+<MudTable Items="@users" MultiSelection="true" SelectionChangeable="true" @bind-SelectedItems="selectedUsers" Hover="true" Breakpoint="Breakpoint.Sm" Loading="@_loading" LoadingProgressColor="Color.Info">
+    <HeaderContent>
+        <MudTh>Логин</MudTh>
+        <MudTh>Пароль</MudTh>
+        <MudTh>Дата и время регистрации</MudTh>
+        <MudTh>Блокировка</MudTh>
+        <MudTh>Ограничения на пароль</MudTh>
+    </HeaderContent>
+    <RowTemplate>
+        <MudTd DataLabel="Login">@context.Login</MudTd>
+        <MudTd DataLabel="Passwort">@context.Password</MudTd>
+        <MudTd DataLabel="RDT">@context.RegistrationDateTime</MudTd>
+        <MudTh DataLabel="IsBanned"><MudCheckBox @bind-Value="@context.IsBanned"></MudCheckBox></MudTh>
+        <MudTh DataLabel="SpecReg"><MudCheckBox @bind-Value="@context.HasSpecialRegistration"></MudCheckBox></MudTh>
+    </RowTemplate>
+</MudTable>
+<div style="display:flex; margin-top: 10px; padding: 10px;">
+    <MudTextField Variant="Variant.Filled" @bind-Value="@_newUserLogin" Label="Логин нового пользователя" />
+    <MudButton Variant="Variant.Filled" Color="Color.Primary">Добавить пользователя с введенным логином</MudButton>
+    </div>
+
+@code {
+    private List<User> users;
+    private HashSet<User> selectedUsers;
+    private bool _loading;
+    private string _newUserLogin;
+    protected override async Task OnInitializedAsync()
+    {
+        using (var client = new HttpClient())
+        {
+            users = await client.GetFromJsonAsync<List<User>>("http://localhost:5282/Users");
+        }
+        await base.OnInitializedAsync();
+    }
+    private async Task OnNewUserButtonClicked()
+    {
+        if (_newUserLogin.Length > 0)
+        {
+            _loading = true;
+            var request = new LoginRequest() { Login = _newUserLogin, Password = "" };
+            using (var client = new HttpClient())
+            {
+                await client.PostAsJsonAsync<LoginRequest>("http://localhost:5282/Users/NewUser", request);
+                users = await client.GetFromJsonAsync<List<User>>("http://localhost:5282/Users");
+            }
+            _loading = false;
+        }
+    }
+
+    private async Task UpdateUsers()
+    {
+        _loading = true;
+        var request = new LoginRequest() { Login = _newUserLogin, Password = "" };
+        using (var client = new HttpClient())
+        {
+            await client.PostAsJsonAsync<List<User>>("http://localhost:5282/Users/Update", users);
+            users = await client.GetFromJsonAsync<List<User>>("http://localhost:5282/Users");
+        }
+        _loading = false;
+    }
+}

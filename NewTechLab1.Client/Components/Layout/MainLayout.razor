@@ -1,11 +1,30 @@
-﻿@inherits LayoutComponentBase
+﻿@using NewTechLab.DTOs
+@inherits LayoutComponentBase
+@inject User user
 <MudThemeProvider />
 <MudPopoverProvider />
 <div class="page">
-
     <main>
-        <div class="top-row px-4">
-            <p style="margin-bottom:0px">Основы новых информационных технологий</p>
+        <div class="top-row px-4" style="justify-content:space-between">
+            @if (user.Login != null && user.Login != string.Empty)
+            {
+                @if (user.Login != "ADMIN")
+                {
+                    <MudMenu AnchorOrigin="Origin.BottomLeft" Label="Меню">
+                        <MudMenuItem Href="/changepassword">Сменить пароль</MudMenuItem>
+                        <MudMenuItem>Об авторе</MudMenuItem>
+                    </MudMenu>
+                }
+                else
+                {
+                    <MudMenu AnchorOrigin="Origin.BottomLeft" Label="Меню">
+                        <MudMenuItem Href="/changepassword">Сменить пароль администратора</MudMenuItem>
+                        <MudMenuItem Href="/adminpanel">Управление пользователями</MudMenuItem>
+                        <MudMenuItem>Об авторе</MudMenuItem>
+                    </MudMenu>
+                }
+            }
+            <p style="margin-bottom:0px">Лаба по защите информации</p>
         </div>
 
         <article>

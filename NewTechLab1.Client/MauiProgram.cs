@@ -1,5 +1,6 @@
 ﻿using Microsoft.Extensions.Logging;
 using MudBlazor.Services;
+using NewTechLab.DTOs;
 
 namespace NewTechLab1.Client
 {
@@ -14,7 +15,7 @@ namespace NewTechLab1.Client
                 {
                     fonts.AddFont("OpenSans-Regular.ttf", "OpenSansRegular");
                 });
-
+            builder.Services.AddSingleton<User>(new User());
             builder.Services.AddMauiBlazorWebView();
 
 #if DEBUG

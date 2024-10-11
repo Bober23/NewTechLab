@@ -3,11 +3,11 @@ Microsoft Visual Studio Solution File, Format Version 12.00
 # Visual Studio Version 17
 VisualStudioVersion = 17.9.34723.18
 MinimumVisualStudioVersion = 10.0.40219.1
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "NewTechLab.Backend", "NewTechLab.Backend\NewTechLab.Backend.csproj", "{0A39A365-211D-47D3-BAD1-3764AA080533}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "NewTechLab.Backend", "NewTechLab.Backend\NewTechLab.Backend.csproj", "{0A39A365-211D-47D3-BAD1-3764AA080533}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "NewTechLab1.Client", "NewTechLab1.Client\NewTechLab1.Client.csproj", "{5FE15DF4-C7D2-496D-8A9D-10F8BCA817D8}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "NewTechLab1.Client", "NewTechLab1.Client\NewTechLab1.Client.csproj", "{5FE15DF4-C7D2-496D-8A9D-10F8BCA817D8}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "NewTechLab.DTOs", "NewTechLab.DTOs\NewTechLab.DTOs.csproj", "{47524CF2-7500-497D-85B6-17D9B990F592}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "NewTechLab.DTOs", "NewTechLab.DTOs\NewTechLab.DTOs.csproj", "{47524CF2-7500-497D-85B6-17D9B990F592}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution

@@ -1,0 +1,11 @@
+<?xml version="1.0" encoding="utf-8"?>
+<ArrayOfUser xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:xsd="http://www.w3.org/2001/XMLSchema">
+  <User>
+    <Login>ADMIN</Login>
+    <Password>admin</Password>
+    <Id>c54f2d40-04dc-4472-954e-e2258520e046</Id>
+    <RegistrationDateTime>2024-10-09T22:25:40.9530672+03:00</RegistrationDateTime>
+    <IsBanned>false</IsBanned>
+    <HasSpecialRegistration>true</HasSpecialRegistration>
+  </User>
+</ArrayOfUser>
