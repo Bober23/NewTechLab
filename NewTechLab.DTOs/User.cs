@@ -14,5 +14,6 @@ namespace NewTechLab.DTOs
         public DateTime RegistrationDateTime { get; set; }
         public bool IsBanned { get; set; }
         public bool HasSpecialRegistration { get; set; } = true;
+        public int minPasswordLengthIfAdmin { get; set; }
     }
 }

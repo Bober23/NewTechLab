@@ -6,21 +6,25 @@
 <div class="page">
     <main>
         <div class="top-row px-4" style="justify-content:space-between">
-            @if (user.Login != null && user.Login != string.Empty)
+            @if (user != null)
             {
                 @if (user.Login != "ADMIN")
                 {
                     <MudMenu AnchorOrigin="Origin.BottomLeft" Label="Меню">
+                        <MudMenuItem Href="/home">Главная</MudMenuItem>
                         <MudMenuItem Href="/changepassword">Сменить пароль</MudMenuItem>
-                        <MudMenuItem>Об авторе</MudMenuItem>
+                        <MudMenuItem Href="/about">Об авторе</MudMenuItem>
+                        <MudMenuItem Href="/" OnClick="@(()=>user = new User())">Выйти из учетной записи</MudMenuItem>
                     </MudMenu>
                 }
                 else
                 {
                     <MudMenu AnchorOrigin="Origin.BottomLeft" Label="Меню">
+                        <MudMenuItem Href="/home">Главная</MudMenuItem>
                         <MudMenuItem Href="/changepassword">Сменить пароль администратора</MudMenuItem>
                         <MudMenuItem Href="/adminpanel">Управление пользователями</MudMenuItem>
-                        <MudMenuItem>Об авторе</MudMenuItem>
+                        <MudMenuItem Href="/about">Об авторе</MudMenuItem>
+                        <MudMenuItem Href="/" OnClick="@(()=>user = new User())">Выйти из учетной записи</MudMenuItem>
                     </MudMenu>
                 }
             }
@@ -32,3 +36,7 @@
         </article>
     </main>
 </div>
+@code
+{
+
+}

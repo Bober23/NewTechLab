@@ -2,10 +2,20 @@
 <ArrayOfUser xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:xsd="http://www.w3.org/2001/XMLSchema">
   <User>
     <Login>ADMIN</Login>
-    <Password>admin</Password>
-    <Id>c54f2d40-04dc-4472-954e-e2258520e046</Id>
-    <RegistrationDateTime>2024-10-09T22:25:40.9530672+03:00</RegistrationDateTime>
+    <Password>12345</Password>
+    <Id>d3a55773-5ac8-4094-94a2-7daa2d107f49</Id>
+    <RegistrationDateTime>2024-10-22T21:17:42.7700469+03:00</RegistrationDateTime>
+    <IsBanned>false</IsBanned>
+    <HasSpecialRegistration>false</HasSpecialRegistration>
+    <minPasswordLengthIfAdmin>5</minPasswordLengthIfAdmin>
+  </User>
+  <User>
+    <Login>TestUser</Login>
+    <Password>Aboba2</Password>
+    <Id>07e04f71-9bc7-495e-a9af-6c0cfef0f930</Id>
+    <RegistrationDateTime>2024-10-22T21:35:26.9172781+03:00</RegistrationDateTime>
     <IsBanned>false</IsBanned>
     <HasSpecialRegistration>true</HasSpecialRegistration>
+    <minPasswordLengthIfAdmin>0</minPasswordLengthIfAdmin>
   </User>
 </ArrayOfUser>

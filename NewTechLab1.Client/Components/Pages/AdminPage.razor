@@ -12,26 +12,34 @@
         <MudTd DataLabel="Login">@context.Login</MudTd>
         <MudTd DataLabel="Passwort">@context.Password</MudTd>
         <MudTd DataLabel="RDT">@context.RegistrationDateTime</MudTd>
-        <MudTh DataLabel="IsBanned"><MudCheckBox @bind-Value="@context.IsBanned"></MudCheckBox></MudTh>
-        <MudTh DataLabel="SpecReg"><MudCheckBox @bind-Value="@context.HasSpecialRegistration"></MudCheckBox></MudTh>
+        <MudTh DataLabel="IsBanned"><MudCheckBox @bind-Value="@context.IsBanned" @onclick=@UpdateUsers></MudCheckBox></MudTh>
+        <MudTh DataLabel="SpecReg"><MudCheckBox @bind-Value="@context.HasSpecialRegistration" @onclick=@UpdateUsers></MudCheckBox></MudTh>
     </RowTemplate>
 </MudTable>
 <div style="display:flex; margin-top: 10px; padding: 10px;">
     <MudTextField Variant="Variant.Filled" @bind-Value="@_newUserLogin" Label="Логин нового пользователя" />
-    <MudButton Variant="Variant.Filled" Color="Color.Primary">Добавить пользователя с введенным логином</MudButton>
-    </div>
+    <MudButton Variant="Variant.Filled" OnClick=@OnNewUserButtonClicked Color="Color.Primary">Добавить пользователя с введенным логином</MudButton>
+</div>
+<div style="display:flex; margin-top: 10px; padding: 10px;">
+    <MudTextField Variant="Variant.Filled" @bind-Value="@minPassLength" Label="Минимальная длина пароля для пользователей" />
+    <MudButton Variant="Variant.Filled" OnClick=@UpdateUsers Color="Color.Primary">Обновить минимальную длину пароля</MudButton>
+</div>
+
 
 @code {
     private List<User> users;
+    private User admin;
     private HashSet<User> selectedUsers;
     private bool _loading;
     private string _newUserLogin;
+    private int minPassLength;
     protected override async Task OnInitializedAsync()
     {
         using (var client = new HttpClient())
         {
             users = await client.GetFromJsonAsync<List<User>>("http://localhost:5282/Users");
         }
+        minPassLength = users[0].minPasswordLengthIfAdmin;
         await base.OnInitializedAsync();
     }
     private async Task OnNewUserButtonClicked()
@@ -45,6 +53,7 @@
                 await client.PostAsJsonAsync<LoginRequest>("http://localhost:5282/Users/NewUser", request);
                 users = await client.GetFromJsonAsync<List<User>>("http://localhost:5282/Users");
             }
+            minPassLength = users[0].minPasswordLengthIfAdmin;
             _loading = false;
         }
     }
@@ -52,12 +61,13 @@
     private async Task UpdateUsers()
     {
         _loading = true;
-        var request = new LoginRequest() { Login = _newUserLogin, Password = "" };
+        users[0].minPasswordLengthIfAdmin = minPassLength;
         using (var client = new HttpClient())
         {
             await client.PostAsJsonAsync<List<User>>("http://localhost:5282/Users/Update", users);
             users = await client.GetFromJsonAsync<List<User>>("http://localhost:5282/Users");
         }
+        minPassLength = users[0].minPasswordLengthIfAdmin;
         _loading = false;
     }
 }

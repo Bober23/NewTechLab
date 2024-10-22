@@ -24,7 +24,25 @@ namespace NewTechLab.Backend.Controllers
             var users = ReadAndDeserialize(_filePath);
             if (users != null && users.FirstOrDefault(x => x.Login == request.Login && x.Password == request.Password) != null)
             {
-                return Ok(users.FirstOrDefault(x => x.Login == request.Login && x.Password == request.Password));
+                var user = users.FirstOrDefault(x => x.Login == request.Login && x.Password == request.Password);
+                if (user.IsBanned)
+                {
+                    return StatusCode(412);
+                }
+                return Ok(user);
+            }
+            return BadRequest();
+        }
+
+        [HttpGet("{id:guid}")]
+        public IActionResult GetPassLength(Guid id) 
+        {
+            var users = ReadAndDeserialize(_filePath);
+            var admin = users.FirstOrDefault(x => x.Login == "ADMIN");
+            var user = users.FirstOrDefault(x => x.Id == id);
+            if (admin != null && user!=null)
+            {
+                return Ok(new RegistrationProps() { MinLegth = admin.minPasswordLengthIfAdmin, UseSpecialCheck = user.HasSpecialRegistration });
             }
             return BadRequest();
         }
@@ -56,7 +74,7 @@ namespace NewTechLab.Backend.Controllers
             return Ok(users);
         }
 
-        [HttpPost]
+        [HttpPost("Update")]
         public IActionResult UpdateUsers(List<User> users)
         {
             SerializeAndSave(_filePath, users);

@@ -1,26 +1,53 @@
-﻿@page "/registration"
+﻿@page "/changepassword"
 @using NewTechLab.DTOs
 @inject NavigationManager _manager
 @inject User _user
 <div style="width:100%; height:100%">
     <MudPaper Class="pa-8" Style="max-width:fit-content;margin:auto;margin-top:15%" Square="true">
-        <h3>Смена пароля при первом входе</h3>
+        <h3>Смена пароля</h3>
         <MudTextField Value="_user.Login" ReadOnly="true" Label="Логин"></MudTextField>
-        <MudTextField @bind-Value="@Password" ErrorText="Неправильный пароль" Label="Пароль" Error="PasswordError"></MudTextField>
-        <MudTextField @bind-Value="@Password" ErrorText="Неправильный пароль" Label="Подтвердите пароль" Error="PasswordError"></MudTextField>
-            <MudButton Color="Color.Default" OnClick="OnEnterButtonClicked">Войти</MudButton>
+        <MudTextField @bind-Value="@Password" ErrorText=@PasswordErrorText InputType="@InputType.Password" Label="Пароль" Error="PasswordError"></MudTextField>
+        <MudTextField @bind-Value="@PasswordConfirm" ErrorText="Пароли не совпадают" Label="Подтвердите пароль" InputType="@InputType.Password" Error="PasswordConfirmError"></MudTextField>
+        <MudButton Color="Color.Default" OnClick="OnEnterButtonClicked">Войти</MudButton>
     </MudPaper>
 </div>
 
 @code {
     public string Password { get; set; }
+    public string PasswordConfirm { get; set; }
     public bool LoginError { get; set; }
     public bool PasswordError { get; set; }
+    public string PasswordErrorText { get; set; }
+    public bool PasswordConfirmError { get; set; }
     public async Task OnEnterButtonClicked()
     {
+        if (Password != PasswordConfirm)
+        {
+            PasswordConfirmError = true;
+            return;
+        }
+        PasswordConfirmError = false;
+        PasswordError = false;
         using (var client = new HttpClient())
         {
-            var response = await client.PostAsJsonAsync<LoginRequest>("http://localhost:5282/Users", new LoginRequest() { Login = _user.Login, Password = Password });
+            RegistrationProps props = await client.GetFromJsonAsync<RegistrationProps>($"http://localhost:5282/Users/{_user.Id}");
+            if (props == null)
+            {
+                return;
+            }
+            if (Password.Length < props.MinLegth)
+            {
+                PasswordErrorText = $"Длина пароля должна быть не меньше {props.MinLegth} символов";
+                PasswordError = true;
+                return;
+            }
+            if (!PasswordCheckHelper.IsPasswordCorrect(Password, props.MinLegth) && props.UseSpecialCheck)
+            {
+                PasswordErrorText = $"Парль должен содержать строчные и заглавные буквы, а так же цифры";
+                PasswordError = true;
+                return;
+            }
+            var response = await client.PostAsJsonAsync<LoginRequest>("http://localhost:5282/Users/ChangePassword", new LoginRequest() { Login = _user.Login, Password = Password });
             User user = await response.Content.ReadFromJsonAsync<User>();
             Console.WriteLine(response.StatusCode);
             if (user != null)

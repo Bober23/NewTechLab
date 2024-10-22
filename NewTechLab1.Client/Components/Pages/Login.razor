@@ -5,41 +5,56 @@
 <div style="width:100%; height:100%">
     <MudPaper Class="pa-8" Style="max-width:fit-content;margin:auto;margin-top:15%" Square="true">
         <h3>Вход</h3>
-        <MudTextField @bind-Value="@LoginString" ErrorText="Данный пользователь не существует" Error="LoginError" Label="Логин"></MudTextField>
-        <MudTextField @bind-Value="@Password" ErrorText="Неправильный пароль" Label="Пароль" Error="PasswordError"></MudTextField>
-        <div style="text-align-last: justify;">
-            <a href="/registration">Регистрация</a>
-            <MudButton Color="Color.Default" OnClick="OnEnterButtonClicked">Войти</MudButton>
-        </div>
+        <MudTextField @bind-Value="@LoginString" ErrorText="Учетная запись заблокирована" Error="LoginError" Label="Логин"></MudTextField>
+        <MudTextField @bind-Value="@Password" ErrorText="Неправильный логин или пароль" Label="Пароль" Error="PasswordError" InputType="@InputType.Password"></MudTextField>
+        <MudButton Color="Color.Default" OnClick="OnEnterButtonClicked">Войти</MudButton>
     </MudPaper>
 </div>
 
 @code {
     public string LoginString { get; set; }
-    public string Password { get; set; }
+    public string Password { get; set; } = string.Empty;
     public bool LoginError { get; set; }
     public bool PasswordError { get; set; }
     public async Task OnEnterButtonClicked()
     {
         using (var client = new HttpClient())
         {
-            var response = await client.PostAsJsonAsync<LoginRequest>("http://localhost:5282/Users", new LoginRequest(){Login = LoginString, Password = Password});
+            LoginError = false;
+            PasswordError = false;
+            var response = await client.PostAsJsonAsync<LoginRequest>("http://localhost:5282/Users", new LoginRequest() { Login = LoginString, Password = Password });
+            if (response.StatusCode == System.Net.HttpStatusCode.PreconditionFailed)
+            {
+                LoginError = true;
+                return;
+            }
             if (!response.IsSuccessStatusCode)
             {
                 PasswordError = true;
                 return;
             }
             User user = await response.Content.ReadFromJsonAsync<User>();
-            Console.WriteLine(response.StatusCode);
+
             if (user != null)
             {
+                if (_user == null)
+                {
+                    _user = new User();
+                }
                 _user.Login = user.Login;
                 _user.Password = user.Password;
                 _user.RegistrationDateTime = user.RegistrationDateTime;
                 _user.Id = user.Id;
+                _user.IsBanned = user.IsBanned;
+                _user.HasSpecialRegistration = user.HasSpecialRegistration;
+                if (user.Password == null || user.Password == string.Empty)
+                {
+                    _manager.NavigateTo("/changepassword");
+                    return;
+                }
                 _manager.NavigateTo("/home");
             }
-            else 
+            else
             {
                 PasswordError = true;
             }
