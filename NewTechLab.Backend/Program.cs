@@ -25,3 +25,6 @@ app.UseAuthorization();
 app.MapControllers();
 
 app.Run();
+CryptoHelper.EncryptUserList();
+
+Console.WriteLine("SHUTDOWN!");

@@ -1,27 +1,36 @@
-﻿using Microsoft.AspNetCore.Http;
+﻿using Microsoft.AspNetCore.Components;
+using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
+using NewTechLab.Backend.Model;
 using NewTechLab.DTOs;
+using System.ComponentModel;
+using System.Text;
 using System.Xml.Serialization;
 
 namespace NewTechLab.Backend.Controllers
 {
-    [Route("[controller]")]
+    [Microsoft.AspNetCore.Mvc.Route("[controller]")]
     [ApiController]
     public class UsersController : ControllerBase
     {
         private readonly string _filePath = "users.txt";
+        private readonly bool _updateDbAfterChanges = true;
+        private bool hasNoDB;
+
         public UsersController()
         {
+            UsersListContainer.FilePath = _filePath;
             FileInfo info = new FileInfo(_filePath);
             if (!info.Exists)
             {
-                SerializeAndSave(_filePath, new List<User>() { new User() { Id = Guid.NewGuid(), Login = "ADMIN", Password = "admin", RegistrationDateTime = DateTime.Now } });
+                hasNoDB = true;
+                UsersListContainer.Users = new List<User>() { new User() { Id = Guid.NewGuid(), Login = "ADMIN", Password = "admin", RegistrationDateTime = DateTime.Now } };
             }
         }
         [HttpPost]
         public IActionResult TryToLogin(LoginRequest request)
         {
-            var users = ReadAndDeserialize(_filePath);
+            var users = UsersListContainer.Users;
             if (users != null && users.FirstOrDefault(x => x.Login == request.Login && x.Password == request.Password) != null)
             {
                 var user = users.FirstOrDefault(x => x.Login == request.Login && x.Password == request.Password);
@@ -33,14 +42,46 @@ namespace NewTechLab.Backend.Controllers
             }
             return BadRequest();
         }
+        [HttpGet("DBCondition")]
+        public IActionResult GetDBCondition()
+        {
+            if (hasNoDB)
+            {
+                return NotFound();
+            }
+            if (UsersListContainer.Users == null)
+            {
+                return NoContent();
+            }
+            return Ok();
+        }
+
+        [HttpGet("LoadDB")]
+        public IActionResult LoadDB(string code)
+        {
+            UsersListContainer.AdminKey = CryptoHelper.HashKeyFromString(code);
+            if (!hasNoDB)
+            {
+                CryptoHelper.DecryptUserList();
+            }
+            if (UsersListContainer.Users.FirstOrDefault(x => x.Login == "ADMIN") != null)
+            {
+                if (hasNoDB)
+                {
+                    CryptoHelper.EncryptUserList();
+                }
+                return Ok();
+            } 
+            return BadRequest("Неверный код");
+        }
 
         [HttpGet("{id:guid}")]
-        public IActionResult GetPassLength(Guid id) 
+        public IActionResult GetPassLength(Guid id)
         {
-            var users = ReadAndDeserialize(_filePath);
+            var users = UsersListContainer.Users;
             var admin = users.FirstOrDefault(x => x.Login == "ADMIN");
             var user = users.FirstOrDefault(x => x.Id == id);
-            if (admin != null && user!=null)
+            if (admin != null && user != null)
             {
                 return Ok(new RegistrationProps() { MinLegth = admin.minPasswordLengthIfAdmin, UseSpecialCheck = user.HasSpecialRegistration });
             }
@@ -50,7 +91,7 @@ namespace NewTechLab.Backend.Controllers
         [HttpPost("NewUser")]
         public IActionResult AddNewUser(LoginRequest request)
         {
-            var users = ReadAndDeserialize(_filePath);
+            var users = UsersListContainer.Users;
             if (users != null)
             {
                 var user = new User
@@ -61,7 +102,11 @@ namespace NewTechLab.Backend.Controllers
                     Id = Guid.NewGuid(),
                 };
                 users.Add(user);
-                SerializeAndSave(_filePath, users);
+                UsersListContainer.Users = users;
+                if (_updateDbAfterChanges)
+                {
+                    CryptoHelper.EncryptUserList();
+                }
                 return Ok(user);
             }
             return BadRequest();
@@ -70,46 +115,36 @@ namespace NewTechLab.Backend.Controllers
         [HttpGet]
         public IActionResult GetAllUsers()
         {
-            var users = ReadAndDeserialize(_filePath);
+            var users = UsersListContainer.Users;
             return Ok(users);
         }
 
         [HttpPost("Update")]
         public IActionResult UpdateUsers(List<User> users)
         {
-            SerializeAndSave(_filePath, users);
+            UsersListContainer.Users = users;
+            if (_updateDbAfterChanges)
+            {
+                CryptoHelper.EncryptUserList();
+            }
             return Ok();
         }
 
         [HttpPost("ChangePassword")]
         public IActionResult ChangeUserPassword(LoginRequest request)
         {
-            var users = ReadAndDeserialize(_filePath);
+            var users = UsersListContainer.Users;
             if (users != null && users.FirstOrDefault(x => x.Login == request.Login) != null)
             {
                 users.FirstOrDefault(x => x.Login == request.Login).Password = request.Password;
-                SerializeAndSave(_filePath, users);
+                UsersListContainer.Users = users;
+                if (_updateDbAfterChanges)
+                {
+                    CryptoHelper.EncryptUserList();
+                }
                 return Ok(users.FirstOrDefault(x => x.Login == request.Login));
             }
             return BadRequest();
-        }
-
-        private List<User> ReadAndDeserialize(string path)
-        {
-            var serializer = new XmlSerializer(typeof(List<User>));
-            using (var reader = new StreamReader(path))
-            {
-                return (List<User>)serializer.Deserialize(reader);
-            }
-        }
-
-        private void SerializeAndSave(string path, List<User> data)
-        {
-            var serializer = new XmlSerializer(typeof(List<User>));
-            using (var writer = new StreamWriter(path))
-            {
-                serializer.Serialize(writer, data);
-            }
         }
     }
 }

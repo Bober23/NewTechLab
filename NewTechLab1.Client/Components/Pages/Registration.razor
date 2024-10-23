@@ -8,7 +8,7 @@
         <MudTextField Value="_user.Login" ReadOnly="true" Label="Логин"></MudTextField>
         <MudTextField @bind-Value="@Password" ErrorText=@PasswordErrorText InputType="@InputType.Password" Label="Пароль" Error="PasswordError"></MudTextField>
         <MudTextField @bind-Value="@PasswordConfirm" ErrorText="Пароли не совпадают" Label="Подтвердите пароль" InputType="@InputType.Password" Error="PasswordConfirmError"></MudTextField>
-        <MudButton Color="Color.Default" OnClick="OnEnterButtonClicked">Войти</MudButton>
+        <MudButton Color="Color.Default" OnClick="OnEnterButtonClicked">Подтвердить</MudButton>
     </MudPaper>
 </div>
 
@@ -43,7 +43,7 @@
             }
             if (!PasswordCheckHelper.IsPasswordCorrect(Password, props.MinLegth) && props.UseSpecialCheck)
             {
-                PasswordErrorText = $"Парль должен содержать строчные и заглавные буквы, а так же цифры";
+                PasswordErrorText = $"Пароль должен содержать строчные и заглавные буквы, а так же цифры";
                 PasswordError = true;
                 return;
             }
