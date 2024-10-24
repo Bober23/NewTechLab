@@ -6,7 +6,7 @@
 <div class="page">
     <main>
         <div class="top-row px-4" style="justify-content:space-between">
-            @if (user != null)
+            @if (user != null && user.Login != null && user.Login.Length > 0)
             {
                 @if (user.Login != "ADMIN")
                 {
@@ -36,3 +36,7 @@
         </article>
     </main>
 </div>
+@code
+{
+
+}

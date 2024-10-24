@@ -1,5 +1,6 @@
 ﻿@page "/"
 @using NewTechLab.DTOs
+@using NewTechLab1.Client.Components.Layout
 @inject NavigationManager _manager
 @inject User _user
 @if (DbIsOpen)
@@ -96,7 +97,10 @@ else
 
             if (user != null)
             {
-                _user = new User();
+                if (_user == null)
+                {
+                    _user = new User();
+                }
                 _user.Login = user.Login;
                 _user.Password = user.Password;
                 _user.RegistrationDateTime = user.RegistrationDateTime;
