@@ -7,6 +7,10 @@ namespace NewTechLab.Backend.Model
     public class DataContext : DbContext
     {
         public DbSet<Student> Student { get; set; }
+        public DataContext()
+        {
+            
+        }
         public DataContext(DbContextOptions<DataContext> options)
         : base(options)
         {
@@ -16,7 +20,7 @@ namespace NewTechLab.Backend.Model
         }
         protected override void OnConfiguring(DbContextOptionsBuilder optionsBuilder)
         {
-            optionsBuilder.UseNpgsql("Host=localhost;Port=5432;Database=NewTechDB;Username=postgres;Password=boberman");
+            optionsBuilder.UseNpgsql("Host=localhost;Port=5432;Database=labdb;Username=user;Password=12345");
         }
         protected override void OnModelCreating(ModelBuilder modelBuilder)
         {
