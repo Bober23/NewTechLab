@@ -21,7 +21,7 @@ else if (DbNotFound)
             <h3>Добро пожаловать!</h3>
             <h4>Для первого входа введите ключ для шифрования базы данных</h4>
             <p>Запомните данный код, в случае его утери доступ к базе данных будет невозможен</p>
-            <MudTextField @bind-Value="@AdminKey" ErrorText="Неверный ключ" Label="Введите новый ключ администратора"></MudTextField>
+            <MudTextField @bind-Value="@AdminKey" ErrorText="Неверный ключ" Label="Введите новый ключ администратора" InputType="@InputType.Password"></MudTextField>
             <MudButton Color="Color.Default" OnClick="OnKeyVerificationButtonClicked">Создать новый ключ</MudButton>
         </MudPaper>
     </div>
@@ -31,7 +31,7 @@ else
     <div style="width:100%; height:100%">
         <MudPaper Class="pa-8" Style="max-width:fit-content;margin:auto;margin-top:15%" Square="true">
             <h3>База данных зашифрована, введите ключ администратора</h3>
-            <MudTextField @bind-Value="@AdminKey" ErrorText="Неверный ключ" Error=@AdminKeyError Label="Ключ администратора"></MudTextField>
+            <MudTextField @bind-Value="@AdminKey" ErrorText="Неверный ключ" Error=@AdminKeyError Label="Ключ администратора" InputType="@InputType.Password"></MudTextField>
             <MudButton Color="Color.Default" OnClick="OnKeyVerificationButtonClicked">Расшифровать базу данных</MudButton>
         </MudPaper>
     </div>
@@ -107,7 +107,7 @@ else
                 _user.Id = user.Id;
                 _user.IsBanned = user.IsBanned;
                 _user.HasSpecialRegistration = user.HasSpecialRegistration;
-                if (user.Password == null || user.Password == string.Empty)
+                if (user.Password == null || user.Password == string.Empty || (_user.HasSpecialRegistration && !PasswordCheckHelper.IsPasswordCorrect(_user.Password, 0)))
                 {
                     _manager.NavigateTo("/changepassword");
                     return;

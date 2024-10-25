@@ -4,9 +4,13 @@
 @inject User _user
 <div style="width:100%; height:100%">
     <MudPaper Class="pa-8" Style="max-width:fit-content;margin:auto;margin-top:15%" Square="true">
-        <h3>Смена пароля</h3>
+        <h3>Установка нового пароля</h3>
         <MudTextField Value="_user.Login" ReadOnly="true" Label="Логин"></MudTextField>
-        <MudTextField @bind-Value="@Password" ErrorText=@PasswordErrorText InputType="@InputType.Password" Label="Пароль" Error="PasswordError"></MudTextField>
+        @if (_user.Password != string.Empty)
+        {
+            <MudTextField @bind-Value="@OldPassword" ErrorText=@PasswordErrorText InputType="@InputType.Password" Label="Старый пароль" Error="OldPasswordError"></MudTextField>
+        }
+        <MudTextField @bind-Value="@Password" ErrorText=@PasswordErrorText InputType="@InputType.Password" Label="Новый пароль" Error="PasswordError"></MudTextField>
         <MudTextField @bind-Value="@PasswordConfirm" ErrorText="Пароли не совпадают" Label="Подтвердите пароль" InputType="@InputType.Password" Error="PasswordConfirmError"></MudTextField>
         <MudButton Color="Color.Default" OnClick="OnEnterButtonClicked">Подтвердить</MudButton>
     </MudPaper>
@@ -14,6 +18,8 @@
 
 @code {
     public string Password { get; set; }
+    public string OldPassword { get; set; }
+    public bool OldPasswordError { get; set; }
     public string PasswordConfirm { get; set; }
     public bool LoginError { get; set; }
     public bool PasswordError { get; set; }
@@ -21,11 +27,17 @@
     public bool PasswordConfirmError { get; set; }
     public async Task OnEnterButtonClicked()
     {
+        if (OldPassword != _user.Password && _user.Password != string.Empty)
+        {
+            OldPasswordError = true;
+            return;
+        }
         if (Password != PasswordConfirm)
         {
             PasswordConfirmError = true;
             return;
         }
+        OldPasswordError = true;
         PasswordConfirmError = false;
         PasswordError = false;
         using (var client = new HttpClient())
@@ -52,11 +64,8 @@
             Console.WriteLine(response.StatusCode);
             if (user != null)
             {
-                _user.Login = user.Login;
-                _user.Password = user.Password;
-                _user.RegistrationDateTime = user.RegistrationDateTime;
-                _user.Id = user.Id;
-                _manager.NavigateTo("/home");
+                _user = new User();
+                _manager.NavigateTo("/");
             }
             else
             {

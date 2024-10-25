@@ -13,7 +13,7 @@ namespace NewTechLab.DTOs
         public Guid Id { get; set; }
         public DateTime RegistrationDateTime { get; set; }
         public bool IsBanned { get; set; }
-        public bool HasSpecialRegistration { get; set; } = true;
+        public bool HasSpecialRegistration { get; set; }
         public int minPasswordLengthIfAdmin { get; set; }
     }
 }

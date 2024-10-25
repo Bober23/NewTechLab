@@ -3,14 +3,12 @@
 <MudTable Items="@users" MultiSelection="true" SelectionChangeable="true" @bind-SelectedItems="selectedUsers" Hover="true" Breakpoint="Breakpoint.Sm" Loading="@_loading" LoadingProgressColor="Color.Info">
     <HeaderContent>
         <MudTh>Логин</MudTh>
-        <MudTh>Пароль</MudTh>
         <MudTh>Дата и время регистрации</MudTh>
         <MudTh>Блокировка</MudTh>
         <MudTh>Ограничения на пароль</MudTh>
     </HeaderContent>
     <RowTemplate>
         <MudTd DataLabel="Login">@context.Login</MudTd>
-        <MudTd DataLabel="Passwort">@context.Password</MudTd>
         <MudTd DataLabel="RDT">@context.RegistrationDateTime</MudTd>
         <MudTh DataLabel="IsBanned"><MudCheckBox @bind-Value="@context.IsBanned" @onclick=@UpdateUsers></MudCheckBox></MudTh>
         <MudTh DataLabel="SpecReg"><MudCheckBox @bind-Value="@context.HasSpecialRegistration" @onclick=@UpdateUsers></MudCheckBox></MudTh>
@@ -44,7 +42,7 @@
     }
     private async Task OnNewUserButtonClicked()
     {
-        if (_newUserLogin.Length > 0)
+        if (_newUserLogin!=null && _newUserLogin.Length > 0)
         {
             _loading = true;
             var request = new LoginRequest() { Login = _newUserLogin, Password = "" };
