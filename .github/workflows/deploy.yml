@@ -26,4 +26,4 @@ jobs:
         with:
           file: NewTechLab.Backend/Dockerfile
           push: true
-          tags: user/app:latest
+          tags: ${{ secrets.DOCKER_USERNAME }}/newtechlabbackend:latest
