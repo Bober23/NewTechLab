@@ -74,7 +74,7 @@ namespace NewTechLab.Backend.Controllers
         private int GetAge(DateTime birthday)
         {
             int age = DateTime.Now.Year - birthday.Year;
-            if (DateTime.Now.Month < DateTime.Now.Month || (DateTime.Now.Month == birthday.Month && DateTime.Now.Day < birthday.Day))
+            if (DateTime.Now.Month < DateTime.Now.Month || (DateTime.Now.Month == birthday.Month && DateTime.Now.Day < birthday.Day)) //213qtwehgewgwerhgfqegwgf
             {
                 age--;
             }
