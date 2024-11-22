@@ -20,7 +20,7 @@ namespace NewTechLab1.Client.Components.Pages
         {
             using (var client = new HttpClient())
             {
-                _students = await client.GetFromJsonAsync<List<Student>>("http://localhost:5282/Students");
+                _students = await client.GetFromJsonAsync<List<Student>>($"G/Students");
             }
             await base.OnInitializedAsync();
         }
@@ -42,11 +42,11 @@ namespace NewTechLab1.Client.Components.Pages
             _loading = true;
             using (var client = new HttpClient())
             {
-                var response = await client.PostAsJsonAsync<Student>("http://localhost:5282/Students", _newStudent);
+                var response = await client.PostAsJsonAsync<Student>("http://147.45.183.210:8080/Students", _newStudent);
                 if (response.IsSuccessStatusCode)
                 {
                     _newStudent = new Student();
-                    _students = await client.GetFromJsonAsync<List<Student>>("http://localhost:5282/Students");
+                    _students = await client.GetFromJsonAsync<List<Student>>("http://147.45.183.210:8080/Students");
                 }
             }
             _loading = false;
@@ -56,11 +56,11 @@ namespace NewTechLab1.Client.Components.Pages
             _loading = true;
             using (var client = new HttpClient())
             {
-                var response = await client.PostAsJsonAsync<List<Student>>("http://localhost:5282/Students/Delete", _selectedStudents.ToList());
+                var response = await client.PostAsJsonAsync<List<Student>>("http://147.45.183.210:8080/Students/Delete", _selectedStudents.ToList());
                 if (response.IsSuccessStatusCode)
                 {
                     _newStudent = new Student();
-                    _students = await client.GetFromJsonAsync<List<Student>>("http://localhost:5282/Students");
+                    _students = await client.GetFromJsonAsync<List<Student>>("http://147.45.183.210:8080/Students");
                 }
             }
             _loading = false;
@@ -69,7 +69,7 @@ namespace NewTechLab1.Client.Components.Pages
         {
             using (var client = new HttpClient())
             {
-                var response = await client.PostAsJsonAsync<Filter>("http://localhost:5282/Students/Filter", filter);
+                var response = await client.PostAsJsonAsync<Filter>("http://147.45.183.210:8080/Students/Filter", filter);
                 _students = await response.Content.ReadFromJsonAsync<List<Student>>();
             }
         }
@@ -78,7 +78,7 @@ namespace NewTechLab1.Client.Components.Pages
             using (var client = new HttpClient())
             {
                 filter = new Filter();
-                _students = await client.GetFromJsonAsync<List<Student>>("http://localhost:5282/Students");
+                _students = await client.GetFromJsonAsync<List<Student>>("http://147.45.183.210:8080/Students"); //коммент для проверки
             }
         }
     }

@@ -20,7 +20,9 @@ namespace NewTechLab.Backend.Model
         }
         protected override void OnConfiguring(DbContextOptionsBuilder optionsBuilder)
         {
-            optionsBuilder.UseNpgsql("Host=localhost;Port=5432;Database=labdb;Username=user;Password=12345");
+            string ip = "147.45.183.210";
+            optionsBuilder.UseNpgsql("Host=147.45.183.210;Port=5432;Database=labdb;Username=user;Password=12345");
+            Console.WriteLine(ip);
         }
         protected override void OnModelCreating(ModelBuilder modelBuilder)
         {
